@@ -55,8 +55,6 @@ export class CurrencyComponent implements OnInit {
   }
 
   convert(): void{
-    console.log(this.amount, this.baseCurrency, this.currencyConvertTo);
-    
     this.getCurrencyRate()
   }
 }
