@@ -1,14 +1,17 @@
 <div class="currency-box">
-  <div>{{displayRate}}</div>
-  <input class="currency-input" value="1" type="number">
-  <select>
-    <option value="uah">UAH</option>
-    <option value="usd">USD</option>
-    <option value="eur">EUR</option>
+  <div class="display">{{displayRate}}</div>
+  <input class="currency-input" value="1" type="number" (input)="getAmount($event)">
+  <select (change)="getBaseCurrency($event)">
+    <option *ngFor="let currency of currencies"
+      [value]="currency.lowerCase"
+    >
+      {{currency.capitalized}}
+    </option>
   </select>
-  <button>>></button>
-  <select>
+  <button [disabled]="baseCurrency === currencyConvertTo" (click)="convert()">>></button>
+  <select (change)="getCurrencyConvertTo($event)">
     <option value="uah">UAH</option>
+    <option value="pln">PLN</option>
     <option value="usd">USD</option>
     <option value="eur">EUR</option>
   </select>

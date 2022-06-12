@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyService } from './currency.service';
 
+interface CurrenciesCodes {
+  lowerCase: string,
+  capitalized: string
+}
+
 @Component({
   selector: 'app-currency',
   templateUrl: './currency.component.html',
@@ -8,13 +13,16 @@ import { CurrencyService } from './currency.service';
 })
 
 export class CurrencyComponent implements OnInit {
-  UAH: string = "uah";
-  USD: string = "usd";
-  EUR: string = "eur";
-  PLN: string = "pln";
-  baseCurrency = this.USD;
-  currencyConvertTo = this.UAH;
-  displayRate: string = ""
+  public currencies: Array<CurrenciesCodes> = [
+    {lowerCase: "usd", capitalized: "USD"},
+    {lowerCase: "uah", capitalized: "UAH"},
+    {lowerCase: "eur", capitalized: "EUR"},
+    {lowerCase: "pln", capitalized: "PLN"},
+  ];
+  baseCurrency: string = "usd";
+  currencyConvertTo: string = "uah";
+  displayRate: string = "";
+  amount: string = "1";
 
   constructor(private currencyService: CurrencyService) {}
 
@@ -22,14 +30,33 @@ export class CurrencyComponent implements OnInit {
     this.getCurrencyRate()
   }
 
-  getCurrencyRate() {
+  getCurrencyRate(): void {
     this.currencyService
       .getRate(this.baseCurrency, this.currencyConvertTo)
       .subscribe((response) => {
-        const currentCurrency = Object.keys(response)[1]
-        const rate: number = Object.entries(response)[1][1].toFixed(2)
-        this.displayRate = `${this.baseCurrency} = ${rate} ${currentCurrency}`
+        const currentCurrency = Object.keys(response)[1];
+        const rate: number = Object.entries(response)[1][1].toFixed(2);
+        const sum: number = +this.amount * rate;
+        this.displayRate = `${this.amount} ${this.baseCurrency} = ${sum} ${currentCurrency}`;
       }
     );
+  }
+
+  getAmount(event: Event): void {
+    this.amount = (<HTMLInputElement>event.target).value
+  }
+
+  getBaseCurrency(event: Event) {
+    this.baseCurrency = (<HTMLSelectElement>event.target).value;
+  }
+
+  getCurrencyConvertTo(event: Event) {
+    this.currencyConvertTo = (<HTMLSelectElement>event.target).value;
+  }
+
+  convert(): void{
+    console.log(this.amount, this.baseCurrency, this.currencyConvertTo);
+    
+    this.getCurrencyRate()
   }
 }
